@@ -391,9 +391,9 @@ public class ProductProfiles extends HttpServlet {
 		out.append("</div>");
 		out.append("</div>");
 		
-		out.append("<div class=\"col-lg-12 mb-3\">");
-		out.append(viewList.get(4));
-		out.append("</div>"); // end col-lg-12
+//		out.append("<div class=\"col-lg-12 mb-3\">");
+//		out.append(viewList.get(4));
+//		out.append("</div>"); // end col-lg-12
 		
 		out.append("<div class=\"col-lg-12 mb-3\">");
 		out.append("<label for=\"productNotes\" class=\"form-label\">Chú thích sản phẩm</label>");

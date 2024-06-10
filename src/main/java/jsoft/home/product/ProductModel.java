@@ -323,6 +323,16 @@ public class ProductModel {
 			}
 		}
 		
-		return new Decade(productGroups, productFavorites, productNews,productSupperDiscounts, productSections, productCategorys, sizes, colors, filterProducts, filterProducts.size() + 1);
+		return new Decade(
+				productGroups, 
+				productFavorites, 
+				productNews,
+				productSupperDiscounts, 
+				productSections, 
+				productCategorys, 
+				sizes, 
+				colors, 
+				filterProducts, 
+				filterProducts.size() + 1);
 	}
 }

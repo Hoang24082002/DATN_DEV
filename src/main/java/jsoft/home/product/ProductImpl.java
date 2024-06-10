@@ -78,10 +78,20 @@ public class ProductImpl extends BasicImpl implements Product {
 		sql.append("SELECT * FROM tblproductcategory WHERE pc_pg_id = ").append(similar.getProduct_pg_id()).append(" AND pc_ps_id =  ").append(similar.getProduct_ps_id()).append("; ");
 		
 		// res(6) danh sach kich co san pham
-		sql.append("SELECT * FROM tblsize WHERE s_delete=0; ");
+		if(!isDetail) {
+			sql.append("SELECT * FROM tblsize WHERE s_delete=0; ");
+		} else {
+			sql.append("SELECT * FROM tblsize AS s LEFT JOIN tblproductsize AS ps ON s.s_id = ps.s_id LEFT JOIN tblproduct AS p ON p.product_id = ps.product_id WHERE p.product_id = ").append(similar.getProduct_id()).append("; ");
+		}
+		
 		
 		// res(7) danh sach mau sac san pham
-		sql.append("SELECT * FROM tblcolor WHERE c_delete=0; ");
+		if(!isDetail) {
+			sql.append("SELECT * FROM tblcolor WHERE c_delete=0; ");
+		} else {
+			sql.append("SELECT * FROM tblcolor AS c LEFT JOIN tblproductcolor AS pc ON c.c_id = pc.c_id LEFT JOIN tblproduct AS p ON p.product_id = pc.product_id WHERE p.product_id = ").append(similar.getProduct_id()).append("; ");
+		}
+		
 		
 		// res(8) danh sach loc san pham
 		if(!isDetail) {

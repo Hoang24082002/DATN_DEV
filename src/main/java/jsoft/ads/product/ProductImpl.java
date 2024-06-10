@@ -324,17 +324,37 @@ public class ProductImpl extends BasicImpl implements Product {
 	public boolean addProductColor(ProductColorObject item) {
 		// câu lệnh SQL
 		StringBuffer sql = new StringBuffer();
-		sql.append("INSERT INTO tblproductcolor(");
-		sql.append("c_id, product_id ");
-		sql.append(")");
-		sql.append("VALUE(?, ?)");
+		StringBuffer sqlDel = new StringBuffer();
+		if(this.checkEmptyProductColor(item)) {
+			sql.append("INSERT INTO tblproductcolor(");
+			sql.append("c_id, product_id ");
+			sql.append(")");
+			sql.append("VALUE(?, ?)");			
+		} else {
+			sqlDel.append("DELETE FROM tblproductcolor WHERE (c_id=?) AND (product_id=?)");
+			
+			sql.append("INSERT INTO tblproductcolor(");
+			sql.append("c_id, product_id ");
+			sql.append(")");
+			sql.append("VALUE(?, ?)");
+		}
 
 		try {
 			PreparedStatement pre = this.con.prepareStatement(sql.toString());
-			pre.setInt(1, item.getC_id());
-			pre.setInt(2, item.getProduct_id());
+			if(sqlDel.toString().equalsIgnoreCase("")) {
+				pre.setInt(1, item.getC_id());
+				pre.setInt(2, item.getProduct_id());
+				return this.add(pre);
+			} else {
+				PreparedStatement preDel = this.con.prepareStatement(sqlDel.toString());
+				preDel.setInt(1, item.getC_id());
+				preDel.setInt(2, item.getProduct_id());
+				
+				pre.setInt(1, item.getC_id());
+				pre.setInt(2, item.getProduct_id());
+				return this.add(preDel) && this.del(pre);				
+			}
 
-			return this.add(pre);
 
 		} catch (SQLException e) {
 			try {
@@ -344,6 +364,7 @@ public class ProductImpl extends BasicImpl implements Product {
 			}
 			e.printStackTrace();
 		}
+		System.out.println();
 		return false;
 	}
 
@@ -351,17 +372,37 @@ public class ProductImpl extends BasicImpl implements Product {
 	public boolean addProductSize(ProductSizeObject item) {
 		// câu lệnh SQL
 		StringBuffer sql = new StringBuffer();
-		sql.append("INSERT INTO tblproductsize(");
-		sql.append("s_id, product_id ");
-		sql.append(")");
-		sql.append("VALUE(?, ?)");
+		StringBuffer sqlDel = new StringBuffer();
+		
+		if(this.checkEmptyProductSize(item)) {
+			sql.append("INSERT INTO tblproductsize(");
+			sql.append("s_id, product_id ");
+			sql.append(")");
+			sql.append("VALUE(?, ?)");			
+		} else {
+			sqlDel.append("DELETE FROM tblproductsize WHERE (s_id=?) AND (product_id=?)");
+			
+			sql.append("INSERT INTO tblproductsize(");
+			sql.append("s_id, product_id ");
+			sql.append(")");
+			sql.append("VALUE(?, ?)");
+		}
 
-		try {
+		try {			
 			PreparedStatement pre = this.con.prepareStatement(sql.toString());
-			pre.setInt(1, item.getS_id());
-			pre.setInt(2, item.getProduct_id());
-
-			return this.add(pre);
+			if(sqlDel.toString().equalsIgnoreCase("")) {
+				pre.setInt(1, item.getS_id());
+				pre.setInt(2, item.getProduct_id());
+				return this.add(pre);
+			} else {
+				PreparedStatement preDel = this.con.prepareStatement(sqlDel.toString());
+				preDel.setInt(1, item.getS_id());
+				preDel.setInt(2, item.getProduct_id());
+				
+				pre.setInt(1, item.getS_id());
+				pre.setInt(2, item.getProduct_id());
+				return this.add(preDel) && this.del(pre);				
+			}
 
 		} catch (SQLException e) {
 			try {
@@ -398,4 +439,42 @@ public class ProductImpl extends BasicImpl implements Product {
 		return false;
 	}	
 
+	public boolean checkEmptyProductColor(ProductColorObject item) {
+		boolean flag = true;
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT pc_id FROM tblproductcolor WHERE product_id = ").append(item.getProduct_id()).append(" AND c_id = ").append(item.getC_id()).append("; ");
+		ArrayList<ResultSet> res = this.getMR(sql.toString());
+
+		for (ResultSet rs : res) {
+			try {
+				if (rs.next()) {
+					flag = false;
+					break;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return flag;
+	}
+	
+	public boolean checkEmptyProductSize(ProductSizeObject item) {
+		boolean flag = true;
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT ps_id FROM tblproductsize WHERE product_id = ").append(item.getProduct_id()).append(" AND s_id = ").append(item.getS_id()).append("; ");
+		ArrayList<ResultSet> res = this.getMR(sql.toString());
+
+		for (ResultSet rs : res) {
+			try {
+				if (rs.next()) {
+					flag = false;
+					break;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return flag;
+	}
+	
 }
